@@ -15,21 +15,31 @@ def emotion_detector(text_to_analyze):
     # post and get response
     response = requests.post(url, json = jsonObj, headers = headers)
     
-    # formatting the response
-    formatted_response = json.loads(response.text)
-    emotions = formatted_response['emotionPredictions'][0]['emotion'] # holds emotion score data
-   
-    # getting the dominant emotion
-    # iterate over key/value pairs to find the highest value
-    dominant_emotion = None # initialize dominant_emotion
-    for key, score in emotions.items():
-        if dominant_emotion is None or score >= dominant_emotion[1]:
-            dominant_emotion = (key, score)
+    if response.status_code == 200:
+        # formatting the response
+        formatted_response = json.loads(response.text)
+        emotions = formatted_response['emotionPredictions'][0]['emotion'] # holds emotion score data
+    
+        # getting the dominant emotion
+        # iterate over key/value pairs to find the highest value
+        dominant_emotion = None # initialize dominant_emotion
+        for key, score in emotions.items():
+            if dominant_emotion is None or score >= dominant_emotion[1]:
+                dominant_emotion = (key, score)
 
-    # add dominant emotion to the emotions dictionary
-    # the dictionay is already in the correct format
-    # but is just missing the dominant_emotion key
-    emotions['dominant_emotion'] = dominant_emotion[0]
+        # add dominant emotion to the emotions dictionary
+        # the dictionay is already in the correct format
+        # but is just missing the dominant_emotion key
+        emotions['dominant_emotion'] = dominant_emotion[0]
+    elif response.status_code == 400:
+        emotions = {
+            'anger': None,
+            'disgust': None,
+            'fear': None,
+            'joy': None,
+            'sadness': None,
+            'dominant_emotion': None
+        }
 
     return emotions
     

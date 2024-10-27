@@ -13,6 +13,10 @@ def get_emotion_detection():
     # analyze the text with the emotion_detector
     response = emotion_detector(text_to_analyze)
 
+    # error handling
+    if response['dominant_emotion'] is None:
+        return "Invalid text! Please try again!."
+
     # create a formatted string to return
     # the string is really long, so I spit it up over multiple lines
     formatted_str = (f"For the given statement, the system response is " 
@@ -32,4 +36,4 @@ def render_index_page():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)  
+    app.run(host="0.0.0.0", port=5002)  
